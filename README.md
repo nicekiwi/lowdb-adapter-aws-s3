@@ -1,0 +1,1 @@
+# lowdb-aws-s3-adapter
