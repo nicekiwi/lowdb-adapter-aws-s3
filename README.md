@@ -2,6 +2,8 @@
 
 Cause AWS is amazeballs.
 
+### Not Production Ready.
+
 ## Installation
 
 `npm i --save lowdb-adapter-aws-s3`
@@ -13,22 +15,36 @@ TODO - Basicly you setup the AWS env variables
 ```
 AWS_S3_API_KEY = null
 AWS_S3_API_SECRET = null
-AWS_S3_SITE_BUCKET = null
-AWS_S3_REGION = null
 ```
 
 ## Usage
 
 ```
+// grab the deps
 const low = require('lowdb');
-const AwsS3 = require('lowdb-adapter-aws-s3');
+const lowAWS = require('lowdb-adapter-aws-s3');
+const database = 'db.json';
 
-const adapter = new AwsS3('db.json')
-const db = low(adapter)
+// init the adapter
+const adapter = new lowAWS(database, { 
+    bucketName: 'lowdb-test' 
+});
 
-// conquer the galaxy!
-db.defaults({ posts: [], user: {} })
-  .write()
+// be awesome!
+let beAwesome = async () => {
+
+    const db = await low(adapter);
+
+    // Set some defaults
+    await db.defaults({ posts: [], user: {} }).write();
+
+    // Add a post
+    await db.get('posts').push({ id: 1, title: 'lowdb is awesome'}).write();
+
+    console.log('Victory!');
+};
+
+beAwesome();
 ```
 
 ## Tests
