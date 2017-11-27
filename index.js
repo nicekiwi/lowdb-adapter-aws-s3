@@ -1,62 +1,67 @@
 const AWS = require('aws-sdk');
+
+AWS.config.update({
+    accessKeyId: process.env.AWS_S3_API_KEY,
+    secretAccessKey: process.env.AWS_S3_API_SECRET
+});
+
 const S3 = new AWS.S3();
-const stringify = obj => JSON.stringify(obj, null, 2);
 
-// Set the region
-AWS.config.region = process.env.AWS_S3_REGION || 'ap-southeast-2';
-
-const AWS_PARAMS = {
-    Bucket: process.env.AWS_S3_SITE_BUCKET || 'lowdb-public',
-    ACL: process.env.AWS_S3_REGION || 'public-read',
-    ContentType: 'application/json'
-};
-
+let stringify = obj => JSON.stringify(obj, null, 2);
 let writeObject = params => {
-    return new Promise((resolve, reject) => {
-        S3.putObject(params, (err, data) => {
-            if (err) reject(err);
-            else resolve();
-        });
+    // TODO better error handling
+    return new Promise(async (resolve, reject) => {
+        S3.putObject(params, err => err ? reject(err): resolve());
     });
 };
 
 class AwsS3Storage {
 
-    constructor(source, { defaultValue = {}, serialize = stringify, deserialize = JSON.parse } = {}) {
+    constructor(source, { defaultValue = {}, serialize = stringify, deserialize = JSON.parse, acl = 'public-read', contentType = 'application/json', bucketName = 'lowdb-public' } = {}) {
         this.source = source
         this.defaultValue = defaultValue
         this.serialize = serialize
         this.deserialize = deserialize
+        this.acl = acl
+        this.contentType = contentType
+        this.bucketName = bucketName
     }
 
     read() {
-
-        let params = Object.assign({ 
-            Key: this.source
-        }, AWS_PARAMS);
-        
         return new Promise((resolve, reject) => {
-            S3.getObject(params, (err, data) => {
-                if (err) reject(err);
-                else resolve(this.deserialize(data));
 
-                // todo, check if data actually exists etc..
+            S3.getObject({ 
+                Key: this.source, 
+                Bucket: this.bucketName 
+            }, (err, data) => {
+
+                // TODO better error handling
+
+                if(data && data.Body) {
+                    resolve(this.deserialize(data.Body));
+                } else {
+
+                    writeObject({ 
+                        Key: this.source, 
+                        Body: this.serialize(this.defaultValue), 
+                        ACL: this.acl, 
+                        ContentType: this.contentType, 
+                        Bucket: this.bucketName 
+                    });
+
+                    resolve(this.defaultValue);
+                }
             });
         });
     }
 
     write(data) {
-
-        let params = Object.assign({ 
+        return writeObject({ 
             Key: this.source, 
-            Body: this.serialize(data) 
-        }, AWS_PARAMS);
-
-        return new Promise((resolve, reject) => {
-            S3.putObject(params, (err, data) => {
-                if (err) reject(err);
-                else resolve();
-            });
+            Body: this.serialize(data), 
+            ACL: this.acl, 
+            ContentType: this.contentType, 
+            Bucket: this.bucketName 
         });
     }
 }
