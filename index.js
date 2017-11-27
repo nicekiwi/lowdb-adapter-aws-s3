@@ -1,6 +1,6 @@
 const AWS = require('aws-sdk');
-const Base = require('./Base');
 const S3 = new AWS.S3();
+const stringify = obj => JSON.stringify(obj, null, 2);
 
 // Set the region
 AWS.config.region = process.env.AWS_S3_REGION || 'ap-southeast-2';
@@ -20,7 +20,14 @@ let writeObject = params => {
     });
 };
 
-class AwsS3Storage extends Base {
+class AwsS3Storage {
+
+    constructor(source, { defaultValue = {}, serialize = stringify, deserialize = JSON.parse } = {}) {
+        this.source = source
+        this.defaultValue = defaultValue
+        this.serialize = serialize
+        this.deserialize = deserialize
+    }
 
     read() {
 
