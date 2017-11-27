@@ -4,14 +4,14 @@
   "description": "Amazon S3 Adapter for LowDB.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha ./test/*.spec.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nicekiwi/lowdb-aws-s3-adapter.git"
   },
   "author": "Ezra Sharp <ezra@kiwidev.co.nz>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/nicekiwi/lowdb-aws-s3-adapter/issues"
   },
