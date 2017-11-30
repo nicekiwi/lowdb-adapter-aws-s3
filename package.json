@@ -2,9 +2,9 @@
   "name": "lowdb-adapter-aws-s3",
   "version": "1.0.0",
   "description": "Amazon S3 Adapter for LowDB.",
-  "main": "index.js",
+  "main": "./src/index.js",
   "scripts": {
-    "test": "mocha ./test/*.spec.js"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -20,9 +20,16 @@
     "aws-sdk": "^2.156.0"
   },
   "devDependencies": {
-    "chai": "^4.1.2",
-    "mocha": "^4.0.1",
-    "mock-aws-s3": "^2.6.0",
+    "husky": "^0.14.3",
+    "jest": "^21.2.1",
     "sinon": "^4.1.2"
+  },
+  "engines": {
+    "node": ">=8"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm test"
+    }
   }
 }

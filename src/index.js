@@ -1,30 +1,29 @@
-const AWS = require('aws-sdk');
+const AWS = require('./aws')
+const S3 = new AWS.S3()
 
-AWS.config.update({
-    accessKeyId: process.env.AWS_S3_API_KEY,
-    secretAccessKey: process.env.AWS_S3_API_SECRET
-});
+const stringify = obj => { 
+    return JSON.stringify(obj, null, 2)
+}
 
-const S3 = new AWS.S3();
-
-let stringify = obj => JSON.stringify(obj, null, 2);
-let writeObject = params => {
+const writeObject = params => {
     // TODO better error handling
     return new Promise(async (resolve, reject) => {
-        S3.putObject(params, err => err ? reject(err): resolve());
-    });
-};
+        S3.putObject(params, err => err ? reject(err): resolve())
+    })
+}
 
-class AwsS3Storage {
+class AwsStorage {
 
-    constructor(source, { defaultValue = {}, serialize = stringify, deserialize = JSON.parse, acl = 'public-read', contentType = 'application/json', bucketName = 'lowdb-public' } = {}) {
-        this.source = source
+    constructor(source, { 
+        defaultValue = {}, serialize = stringify, deserialize = JSON.parse, aws = {}
+    } = {}) {
+        this.source =       source
         this.defaultValue = defaultValue
-        this.serialize = serialize
-        this.deserialize = deserialize
-        this.acl = acl
-        this.contentType = contentType
-        this.bucketName = bucketName
+        this.serialize =    serialize
+        this.deserialize =  deserialize
+        this.acl =          aws.acl || 'private'
+        this.contentType =  aws.contentType || 'application/json'
+        this.bucketName =   aws.bucketName || 'lowdb-private'
     }
 
     read() {
@@ -38,7 +37,7 @@ class AwsS3Storage {
                 // TODO better error handling
 
                 if(data && data.Body) {
-                    resolve(this.deserialize(data.Body));
+                    resolve(this.deserialize(data.Body))
                 } else {
 
                     writeObject({ 
@@ -47,12 +46,12 @@ class AwsS3Storage {
                         ACL: this.acl, 
                         ContentType: this.contentType, 
                         Bucket: this.bucketName 
-                    });
+                    })
 
-                    resolve(this.defaultValue);
+                    resolve(this.defaultValue)
                 }
-            });
-        });
+            })
+        })
     }
 
     write(data) {
@@ -62,8 +61,8 @@ class AwsS3Storage {
             ACL: this.acl, 
             ContentType: this.contentType, 
             Bucket: this.bucketName 
-        });
+        })
     }
 }
 
-module.exports = AwsS3Storage;
+module.exports = AwsStorage

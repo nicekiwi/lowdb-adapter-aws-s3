@@ -1,4 +1,4 @@
-# Amazon S3 Adapter for LowDB
+# LowDB Amazon S3 Adapter
 
 Cause AWS is amazeballs.
 
@@ -20,33 +20,33 @@ AWS_S3_API_SECRET = null
 ## Usage
 
 ```
-// grab the deps
-const low = require('lowdb');
-const lowAWS = require('lowdb-adapter-aws-s3');
-const database = 'db.json';
+// Grab the deps
+const lowDB = require('lowdb');
+const AwsAdapter = require('lowdb-adapter-aws-s3');
 
-// init the adapter
-const adapter = new lowAWS(database, { 
-    bucketName: 'lowdb-test' 
-});
+// Init the adapter
+const adapter = new AwsAdapter('db.json');
 
-// be awesome!
-let beAwesome = async () => {
+// Go hard!
+lowDB(adapter)
 
-    const db = await low(adapter);
+  // Defaults FTW
+  .then(db => db.defaults({ posts: [], user: {} }).write())
 
-    // Set some defaults
-    await db.defaults({ posts: [], user: {} }).write();
+  // Push something awesome
+  .then(db => db.get('posts').push({ id: 1, title: 'lowdb is awesome'}).write())
 
-    // Add a post
-    await db.get('posts').push({ id: 1, title: 'lowdb is awesome'}).write();
-
-    console.log('Victory!');
-};
-
-beAwesome();
+  // Profit!
+  .then(db => console.log('Victory!'))
 ```
 
 ## Tests
 
-TODO
+`npm test`
+
+## TODO
+
+* write tests
+* Finish documention config options
+* Support the same NodeJS version as lowdb.
+* handle S3 errors better
