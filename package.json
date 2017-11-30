@@ -1,6 +1,6 @@
 {
   "name": "lowdb-adapter-aws-s3",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Amazon S3 Adapter for LowDB.",
   "main": "./src/index.js",
   "scripts": {
