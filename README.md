@@ -1,5 +1,7 @@
 # LowDB Amazon S3 Adapter
 
+[![](http://img.shields.io/npm/dm/lowdb-adapter-aws-s3.svg?style=flat)](https://www.npmjs.org/package/lowdb-adapter-aws-s3) [![Build Status](https://travis-ci.org/nicekiwi/lowdb-adapter-aws-s3.svg?branch=master)](https://travis-ci.org/nicekiwi/lowdb-adapter-aws-s3) [![npm](https://img.shields.io/npm/v/lowdb.svg)](https://www.npmjs.org/package/lowdb-adapter-aws-s3)
+
 Cause AWS is amazeballs.
 
 ### Not Production Ready.
@@ -46,7 +48,7 @@ lowDB(adapter)
 
 ## TODO
 
-* write tests
+* ~~write tests~~
 * Finish documention config options
 * Support the same NodeJS version as lowdb.
 * handle S3 errors better
