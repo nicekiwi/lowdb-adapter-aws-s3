@@ -10,15 +10,6 @@ Cause AWS is amazeballs.
 
 `npm i --save lowdb-adapter-aws-s3`
 
-## Configuration
-
-TODO - Basicly you setup the AWS env variables
-
-```
-AWS_S3_API_KEY = null
-AWS_S3_API_SECRET = null
-```
-
 ## Usage
 
 ```
@@ -40,6 +31,15 @@ lowDB(adapter)
 
   // Profit!
   .then(db => console.log('Victory!'))
+```
+
+## Configuration
+
+TODO - Basicly you setup the AWS env variables
+
+```
+AWS_ACCESS_KEY_ID = null
+AWS_SECRET_ACCESS_KEY = null
 ```
 
 ## Tests

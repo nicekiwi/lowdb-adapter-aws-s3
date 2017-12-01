@@ -1,21 +1,21 @@
-const AWS = require('./aws')
-const S3 = new AWS.S3()
+const AWS = require('aws-sdk')
 
 const stringify = obj => { 
     return JSON.stringify(obj, null, 2)
 }
 
-const writeObject = params => {
-    // TODO better error handling
+const writeObject = (aws, params) => {
     return new Promise(async (resolve, reject) => {
-        S3.putObject(params, err => err ? reject(err): resolve())
+        aws.putObject(params, err => err ? reject(err): resolve())
     })
 }
 
 class AwsStorage {
-
-    constructor(source, { 
-        defaultValue = {}, serialize = stringify, deserialize = JSON.parse, aws = {}
+    constructor(source, {  
+        defaultValue = {}, 
+        serialize = stringify, 
+        deserialize = JSON.parse,
+        aws = {}
     } = {}) {
         this.source =       source
         this.defaultValue = defaultValue
@@ -24,6 +24,13 @@ class AwsStorage {
         this.acl =          aws.acl || 'private'
         this.contentType =  aws.contentType || 'application/json'
         this.bucketName =   aws.bucketName || 'lowdb-private'
+
+        AWS.config.update({
+            accessKeyId: this.aws.accessKeyId || process.AWS_ACCESS_KEY_ID || null,
+            secretAccessKey: this.aws.secretAccessKey || process.AWS_SECRET_ACCESS_KEY || null
+        })
+
+        this.S3 = new AWS.S3()
     }
 
     read() {
@@ -34,28 +41,27 @@ class AwsStorage {
                 Bucket: this.bucketName 
             }, (err, data) => {
 
-                // TODO better error handling
-
-                if(data && data.Body) {
+                if(err) {
+                    reject(err)
+                } else if(data && data.Body) {
                     resolve(this.deserialize(data.Body))
                 } else {
-
-                    writeObject({ 
+                    writeObject(this.S3, { 
                         Key: this.source, 
                         Body: this.serialize(this.defaultValue), 
                         ACL: this.acl, 
                         ContentType: this.contentType, 
                         Bucket: this.bucketName 
-                    })
-
-                    resolve(this.defaultValue)
+                    }).then(() => {
+                        resolve(this.defaultValue)
+                    }).catch(err => reject())
                 }
             })
         })
     }
 
     write(data) {
-        return writeObject({ 
+        return writeObject(this.S3, { 
             Key: this.source, 
             Body: this.serialize(data), 
             ACL: this.acl, 
