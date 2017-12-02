@@ -26,8 +26,8 @@ class AwsStorage {
         this.bucketName =   aws.bucketName || 'lowdb-private'
 
         AWS.config.update({
-            accessKeyId: this.aws.accessKeyId || process.AWS_ACCESS_KEY_ID || null,
-            secretAccessKey: this.aws.secretAccessKey || process.AWS_SECRET_ACCESS_KEY || null
+            accessKeyId: aws.accessKeyId || process.AWS_ACCESS_KEY_ID || null,
+            secretAccessKey: aws.secretAccessKey || process.AWS_SECRET_ACCESS_KEY || null
         })
 
         this.S3 = new AWS.S3()
@@ -36,7 +36,7 @@ class AwsStorage {
     read() {
         return new Promise((resolve, reject) => {
 
-            S3.getObject({ 
+            this.S3.getObject({ 
                 Key: this.source, 
                 Bucket: this.bucketName 
             }, (err, data) => {
