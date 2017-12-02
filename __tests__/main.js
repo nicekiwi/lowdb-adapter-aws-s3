@@ -26,8 +26,8 @@ describe('AWS Adapter', () => {
     
         const storage = new AwsAdapter('db.json', { serialize, deserialize })
     
-        await storage.read()
         await storage.write(obj)
+        await storage.read()
     
         expect(serialize.calledWith(obj)).toBeTruthy()
         expect(deserialize.called).toBeTruthy()
