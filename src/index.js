@@ -26,8 +26,8 @@ class AwsStorage {
         this.bucketName =   aws.bucketName || 'lowdb-private'
 
         AWS.config.update({
-            accessKeyId: aws.accessKeyId || process.AWS_ACCESS_KEY_ID || null,
-            secretAccessKey: aws.secretAccessKey || process.AWS_SECRET_ACCESS_KEY || null
+            accessKeyId: aws.accessKeyId  || null,
+            secretAccessKey: aws.secretAccessKey || null
         })
 
         this.S3 = new AWS.S3()
