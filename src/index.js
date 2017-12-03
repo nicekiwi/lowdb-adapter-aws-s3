@@ -5,7 +5,7 @@ const stringify = obj => {
 }
 
 const writeObject = (aws, params) => {
-    return new Promise(async (resolve, reject) => {
+    return new Promise((resolve, reject) => {
         aws.putObject(params, err => err ? reject(err): resolve())
     })
 }
@@ -15,8 +15,8 @@ class AwsStorage {
         defaultValue = {}, 
         serialize = stringify, 
         deserialize = JSON.parse,
-        aws = {}
-    } = {}) {
+        aws = {}} = {}
+    ) {
         this.source =       source
         this.defaultValue = defaultValue
         this.serialize =    serialize
@@ -41,11 +41,8 @@ class AwsStorage {
                 Bucket: this.bucketName 
             }, (err, data) => {
 
-                if(err) {
-                    reject(err)
-                } else if(data && data.Body) {
-                    resolve(this.deserialize(data.Body))
-                } else {
+                // Catch 'NoSuchKey' error
+                if(err && err.statusCode === 404) {
                     writeObject(this.S3, { 
                         Key: this.source, 
                         Body: this.serialize(this.defaultValue), 
@@ -54,7 +51,16 @@ class AwsStorage {
                         Bucket: this.bucketName 
                     }).then(() => {
                         resolve(this.defaultValue)
-                    }).catch(err => reject())
+                    }).catch(err => reject)
+                } 
+                
+                // return the data if found
+                else if(data && data.Body) {
+                    resolve(this.deserialize(data.Body))
+                } 
+                
+                else if(err) {
+                    reject(err)
                 }
             })
         })
