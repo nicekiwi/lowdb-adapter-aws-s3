@@ -2,12 +2,15 @@
 
 class S3 {
     constructor() {
+        this.key = null
         this.data = null
     }
 
     getObject(params, callback) {
         if(!params.Key) return callback('Key is missing.')
         if(!params.Bucket) return callback('Bucket is missing.')
+        if(params.Key !== this.key) return callback({ statusCode: 404 });
+
         return callback(null, { Body: this.data });
     }
 
@@ -15,8 +18,10 @@ class S3 {
         if(!params.Key) return callback('Key is missing.')
         if(!params.Body) return callback('Body is missing.')
         if(!params.Bucket) return callback('Bucket is missing.')
-    
-        this.data = params.Body;
+
+        this.key = params.Key
+        this.data = params.Body
+
         return callback(null);
     }
 }

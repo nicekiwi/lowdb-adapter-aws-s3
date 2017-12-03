@@ -42,7 +42,7 @@ class AwsStorage {
             }, (err, data) => {
 
                 // Catch 'NoSuchKey' error
-                if((err && err.statusCode === 404) || (data && !data.Body)) {
+                if(err && err.statusCode === 404) {
                     writeObject(this.S3, { 
                         Key: this.source, 
                         Body: this.serialize(this.defaultValue), 
@@ -54,14 +54,15 @@ class AwsStorage {
                     }).catch(err => reject)
                 } 
                 
+                // reject with other error
+                else if(err) {
+                    reject(err)
+                }
+
                 // return the data if found
                 else if(data && data.Body) {
                     resolve(this.deserialize(data.Body))
                 } 
-                
-                else if(err) {
-                    reject(err)
-                }
             })
         })
     }
