@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/nicekiwi/lowdb-aws-s3-adapter#readme",
   "dependencies": {
-    "aws-sdk": "^2.156.0"
+    "aws-sdk": "^2.167.0"
   },
   "devDependencies": {
     "babel-cli": "^6.2.0",
@@ -61,6 +61,12 @@
   "husky": {
     "hooks": {
       "pre-commit": "npm test"
+    }
+  },
+  "jest": {
+    "verbose": true,
+    "moduleNameMapper": {
+      "aws-sdk/clients/s3": "<rootDir>/__mocks__/aws-sdk"
     }
   }
 }

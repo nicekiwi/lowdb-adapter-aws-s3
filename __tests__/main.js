@@ -1,24 +1,19 @@
-/* eslint-disable */
 'use strict'
 
-// require mocked aws-sdk
-jest.mock('aws-sdk')
+jest.mock('aws-sdk/clients/s3')
 
-const obj = { a: 1 }
 const sinon = require('sinon')
-const AwsAdapter = require('../src/main')
+const S3Adapter = require('../src/main')
+const obj = { a: 1 }
 
 describe('AWS Adapter', () => {
-  const options = { aws: { accessKeyId: 'abc', secretAccessKey: '123' } }
-
   test('should read from db', () => {
-    const storage = new AwsAdapter('db.json', options)
+    let storage = new S3Adapter()
     storage.read().then(data => expect(data).toEqual({}))
   })
 
   test('should write to db', () => {
-    const storage = new AwsAdapter('db.json', options)
-
+    let storage = new S3Adapter()
     storage
       .write(obj)
       .then(() => storage.read())
@@ -26,14 +21,13 @@ describe('AWS Adapter', () => {
       .catch(console.error)
   })
 
-  it('should support options', () => {
+  test('should support options', () => {
     const serialize = sinon.spy(JSON.stringify)
     const deserialize = sinon.spy(JSON.parse)
-    const storage = new AwsAdapter('db.json', {
+    const storage = new S3Adapter('db.json', {
       serialize,
-      deserialize,
-      aws: options.aws
-    }) 
+      deserialize
+    })
 
     storage
       .write(obj)
