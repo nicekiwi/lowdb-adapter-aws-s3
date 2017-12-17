@@ -19,9 +19,9 @@ module.exports = class {
     this.defaultValue = defaultValue
     this.serialize = serialize
     this.deserialize = deserialize
-    this.acl = aws.acl || 'private'
     this.contentType = aws.contentType || 'application/json'
     this.bucketName = aws.bucketName || 'lowdb-private'
+    this.acl = aws.acl || 'private'
   }
 
   read() {
@@ -32,7 +32,16 @@ module.exports = class {
           resolve(this.deserialize(data.Body))
         })
         .catch(err => {
-          if (err.errorCode === 'NoSuchKey') {
+          if (err.errorCode === 'NoSuchBucket') {
+            S3.createBucket({ Bucket: this.bucketName })
+              .promise()
+              .then(data => {
+                this.write(this.defaultValue)
+                  .then(() => resolve(this.defaultValue))
+                  .catch(reject)
+              })
+              .catch(reject)
+          } else if (err.errorCode === 'NoSuchKey') {
             this.write(this.defaultValue)
               .then(() => resolve(this.defaultValue))
               .catch(reject)

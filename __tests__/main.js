@@ -6,17 +6,17 @@ const sinon = require('sinon')
 const S3Adapter = require('../src/main')
 const obj = { a: 1 }
 
-describe('AWS Adapter', () => {
-  test('should read from db', () => {
-    let storage = new S3Adapter()
-    storage.read().then(data => expect(data).toEqual({}))
+describe('AWS S3 Adapter', () => {
+  test('should read from aws', () => {
+    let db = new S3Adapter()
+    db.read().then(data => expect(data).toEqual({}))
   })
 
-  test('should write to db', () => {
-    let storage = new S3Adapter()
-    storage
+  test('should write to aws', () => {
+    let db = new S3Adapter()
+    db
       .write(obj)
-      .then(() => storage.read())
+      .then(() => db.read())
       .then(data => expect(data).toEqual(obj))
       .catch(console.error)
   })
@@ -24,14 +24,14 @@ describe('AWS Adapter', () => {
   test('should support options', () => {
     const serialize = sinon.spy(JSON.stringify)
     const deserialize = sinon.spy(JSON.parse)
-    const storage = new S3Adapter('db.json', {
+    const db = new S3Adapter('db.json', {
       serialize,
       deserialize
     })
 
-    storage
+    db
       .write(obj)
-      .then(() => storage.read())
+      .then(() => db.read())
       .then(data => {
         expect(serialize.calledWith(obj)).toBeTruthy()
         expect(deserialize.called).toBeTruthy()
