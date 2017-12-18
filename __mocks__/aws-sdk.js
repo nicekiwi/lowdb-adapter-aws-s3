@@ -16,19 +16,9 @@ S3.prototype = {
     return this.result
   },
 
-  createBucket: function(params) {
-    this.result = new Promise((resolve, reject) => {
-      this.bucket = params.Bucket
-      resolve()
-    })
-
-    return this
-  },
-
   getObject: function(params) {
     this.result = new Promise((resolve, reject) => {
-      if (params.Key !== this.key.path) reject({ errorCode: 'NoSuchKey' })
-      else if (!params.Bucket) reject({ errorCode: 'NoSuchBucket' })
+      if (params.Key !== this.key.path) reject({ code: 'NoSuchKey' })
       else resolve({ Body: this.key.data })
     })
     

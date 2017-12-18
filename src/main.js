@@ -1,9 +1,6 @@
-const S3_SDK = require('aws-sdk/clients/s3')
-const S3 = new S3_SDK()
-
-const stringify = obj => {
-  return JSON.stringify(obj, null, 2)
-}
+const AWS = require('aws-sdk/global')
+const S3_CLIENT = require('aws-sdk/clients/s3')
+const stringify = obj => JSON.stringify(obj, null, 2)
 
 module.exports = class {
   constructor(
@@ -20,28 +17,30 @@ module.exports = class {
     this.serialize = serialize
     this.deserialize = deserialize
     this.contentType = aws.contentType || 'application/json'
-    this.bucketName = aws.bucketName || 'lowdb-private'
+    this.cognitoCredentials = aws.cognitoCredentials || false
+    this.bucketName = aws.bucketName || 'lowdb-data'
     this.acl = aws.acl || 'private'
+
+    let options = { apiVersion: '2006-03-01' }
+
+    if (this.cognitoCredentials) {
+      options.credentials = new AWS.CognitoIdentityCredentials(
+        this.cognitoCredentials
+      )
+    }
+
+    this.S3 = new S3_CLIENT(options)
   }
 
   read() {
     return new Promise((resolve, reject) => {
-      S3.getObject({ Key: this.source, Bucket: this.bucketName })
+      this.S3.getObject({ Bucket: this.bucketName, Key: this.source })
         .promise()
         .then(data => {
           resolve(this.deserialize(data.Body))
         })
         .catch(err => {
-          if (err.errorCode === 'NoSuchBucket') {
-            S3.createBucket({ Bucket: this.bucketName })
-              .promise()
-              .then(data => {
-                this.write(this.defaultValue)
-                  .then(() => resolve(this.defaultValue))
-                  .catch(reject)
-              })
-              .catch(reject)
-          } else if (err.errorCode === 'NoSuchKey') {
+          if (err.code === 'NoSuchKey') {
             this.write(this.defaultValue)
               .then(() => resolve(this.defaultValue))
               .catch(reject)
@@ -53,12 +52,12 @@ module.exports = class {
   }
 
   write(data) {
-    return S3.putObject({
-      Key: this.source,
+    return this.S3.putObject({
       Body: this.serialize(data),
-      ACL: this.acl,
+      Bucket: this.bucketName,
+      Key: this.source,
       ContentType: this.contentType,
-      Bucket: this.bucketName
+      ACL: this.acl
     }).promise()
   }
 }
