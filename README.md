@@ -94,3 +94,4 @@ Obviously as read/write calls are made on-demand to AWS this is not a fast adapt
 ## Future
 
 * Support bucket/file encryption
+* Some kind of in-memory caching to speed up read times
