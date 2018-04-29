@@ -16,7 +16,7 @@
     "type": "git",
     "url": "git+https://github.com/nicekiwi/lowdb-aws-s3-adapter.git"
   },
-  "author": "Ezra Sharp <ezra@kiwidev.co.nz>",
+  "author": "Ezra Sharp <ezra.sharp@nice.kiwi>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/nicekiwi/lowdb-aws-s3-adapter/issues"
