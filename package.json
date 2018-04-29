@@ -2,7 +2,7 @@
   "name": "lowdb-adapter-aws-s3",
   "version": "1.1.0",
   "description": "Amazon S3 Adapter for LowDB.",
-  "main": "./lib/main.js",
+  "main": "./src/main.js",
   "scripts": {
     "test": "jest && npm run lint",
     "lint": "eslint . --ignore-path .gitignore",
