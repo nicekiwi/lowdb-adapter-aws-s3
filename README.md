@@ -95,3 +95,7 @@ Obviously as read/write calls are made on-demand to AWS this is not a fast adapt
 
 * Support bucket/file encryption
 * Some kind of in-memory caching to speed up read times
+
+## Other Projects using Low-Adapter-AWS-S3
+
+* https://github.com/pharindoko/json-server-less-lambda
