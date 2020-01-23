@@ -1,6 +1,7 @@
-const AWS = require('aws-sdk/global')
-const S3_CLIENT = require('aws-sdk/clients/s3')
-const stringify = obj => JSON.stringify(obj, null, 2)
+const AWS = require('aws-sdk');
+const S3_CLIENT = AWS.S3;
+const stringify = obj => JSON.stringify(obj, null, 2);
+const deasync = require("deasync");
 
 module.exports = class {
   constructor(
@@ -33,31 +34,43 @@ module.exports = class {
   }
 
   read() {
-    return new Promise((resolve, reject) => {
-      this.S3.getObject({ Bucket: this.bucketName, Key: this.source })
-        .promise()
-        .then(data => {
-          resolve(this.deserialize(data.Body))
-        })
-        .catch(err => {
-          if (err.code === 'NoSuchKey') {
-            this.write(this.defaultValue)
-              .then(() => resolve(this.defaultValue))
-              .catch(reject)
-          } else {
-            reject(err)
-          }
-        })
-    })
+    
+    var readData = this.defaultValue;
+    var done = false;
+    
+    this.S3.getObject({
+        Bucket: this.bucketName,
+        Key: this.source
+    }, (err, data) => {
+        if(err){
+            if(err.code == "NoSuchKey"){
+                console.log("Error: Could not find ", this.source);
+                this.write(this.defaultValue);
+            }else console.log("Error: ", err);
+        }else{
+            //console.log("Read object: ", this.source, "\nData: ", data.Body);
+            readData = this.deserialize(data.Body);
+        }
+        
+        done=true;
+    });
+    
+    deasync.loopWhile(function(){ return !done; });
+    
+    return readData;
+    
   }
 
   write(data) {
-    return this.S3.putObject({
-      Body: this.serialize(data),
-      Bucket: this.bucketName,
-      Key: this.source,
-      ContentType: this.contentType,
-      ACL: this.acl
-    }).promise()
+    this.S3.putObject({
+        Body: this.serialize(data),
+        Bucket: this.bucketName,
+        Key: this.source,
+        ContentType: this.contentType,
+        ACL: this.acl
+    }, (err, dat) => {
+        if(err) console.log("Error", err);
+        //else console.log("Wrote to object: ", this.source, data);
+    });
   }
 }
