@@ -41,7 +41,7 @@ module.exports = class {
         })
         .catch(err => {
           if (err.code === 'NoSuchKey') {
-            this.write(this.defaultValue)
+            this.persistDefaultValue()
               .then(() => resolve(this.defaultValue))
               .catch(reject)
           } else {
@@ -59,5 +59,9 @@ module.exports = class {
       ContentType: this.contentType,
       ACL: this.acl
     }).promise()
+  }
+
+  persistDefaultValue() {
+    return this.write(this.defaultValue)
   }
 }

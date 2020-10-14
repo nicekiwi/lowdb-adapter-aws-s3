@@ -1,7 +1,5 @@
 'use strict'
 
-jest.mock('aws-sdk/clients/s3')
-
 const sinon = require('sinon')
 const S3Adapter = require('../src/main')
 const obj = { a: 1 }
@@ -32,9 +30,20 @@ describe('AWS S3 Adapter', () => {
     db
       .write(obj)
       .then(() => db.read())
-      .then(data => {
+      .then(() => {
         expect(serialize.calledWith(obj)).toBeTruthy()
         expect(deserialize.called).toBeTruthy()
       })
+  })
+
+  test('should persist defaultValue', () => {
+    const db = new S3Adapter('db.json', {
+      defaultValue: obj
+    })
+
+    db
+      .read()
+      .then(data => expect(data).toEqual(obj))
+      .catch(console.error)
   })
 })

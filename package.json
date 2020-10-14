@@ -1,6 +1,6 @@
 {
   "name": "lowdb-adapter-aws-s3",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Amazon S3 Adapter for LowDB.",
   "main": "./lib/main.js",
   "scripts": {
@@ -67,7 +67,7 @@
   "jest": {
     "verbose": true,
     "moduleNameMapper": {
-      "aws-sdk/clients/s3": "<rootDir>/__mocks__/aws-sdk"
+      "aws-sdk/clients/s3": "<rootDir>/__mocks__/aws-sdk.js"
     }
   }
 }
