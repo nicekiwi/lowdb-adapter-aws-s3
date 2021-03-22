@@ -1,39 +1,30 @@
 /* eslint-disable */
 'use strict'
 
-function S3() {
-  this.result = null
-  this.bucket = null
-  this.key = {
-    path: null,
-    data: null
+module.exports = class S3 {
+  constructor(options) {
+    this.options = options
+    this.result = null
+    this.bucket = null
+    this.key = {
+      path: null,
+      data: null
+    }
   }
-}
 
-S3.prototype = {
+  promise() {
+    return new Promise((resolve, reject) => resolve(this.result))
+  }
 
-  promise: function() {
-    return this.result
-  },
-
-  getObject: function(params) {
-    this.result = new Promise((resolve, reject) => {
-      if (params.Key !== this.key.path) reject({ code: 'NoSuchKey' })
-      else resolve({ Body: this.key.data })
-    })
-    
+  getObject(params) {
+    if (params.Key !== this.key.path) this.result = { code: 'NoSuchKey' }
+    else this.result = { Body: this.key.data }
     return this
-  },
+  }
 
-	putObject: function(params) {
-    this.result = new Promise((resolve, reject) => {
-      this.key.path = params.Key
-      this.key.data = params.Body
-      resolve()
-    })
-    
+  putObject(params) {
+    this.key.path = params.Key
+    this.key.data = params.Body
     return this
   }
 }
-
-module.exports = S3

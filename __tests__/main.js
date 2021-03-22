@@ -1,7 +1,5 @@
 'use strict'
 
-jest.mock('aws-sdk/clients/s3')
-
 const sinon = require('sinon')
 const S3Adapter = require('../src/main')
 const obj = { a: 1 }

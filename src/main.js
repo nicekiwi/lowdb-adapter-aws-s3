@@ -32,32 +32,35 @@ module.exports = class {
     this.S3 = new S3_CLIENT(options)
   }
 
+  handleReadError(err, resolve, reject) {
+    if (err.code === 'NoSuchKey') {
+      return this.write(this.defaultValue)
+        .then(() => resolve(this.defaultValue))
+        .catch(reject)
+    } else {
+      return reject(err)
+    }
+  }
+
   read() {
     return new Promise((resolve, reject) => {
-      this.S3.getObject({ Bucket: this.bucketName, Key: this.source })
+      const params = { Bucket: this.bucketName, Key: this.source }
+      this.S3.getObject(params)
         .promise()
-        .then(data => {
-          resolve(this.deserialize(data.Body))
-        })
-        .catch(err => {
-          if (err.code === 'NoSuchKey') {
-            this.write(this.defaultValue)
-              .then(() => resolve(this.defaultValue))
-              .catch(reject)
-          } else {
-            reject(err)
-          }
-        })
+        .then(data => resolve(this.deserialize(data.Body)))
+        .catch(err => this.handleReadError(err, resolve, reject))
     })
   }
 
   write(data) {
-    return this.S3.putObject({
+    const params = {
       Body: this.serialize(data),
       Bucket: this.bucketName,
       Key: this.source,
       ContentType: this.contentType,
       ACL: this.acl
-    }).promise()
+    }
+
+    return this.S3.putObject(params).promise()
   }
 }

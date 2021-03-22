@@ -4,7 +4,7 @@
 
 This adapter allows you to create and use a lowDB source located on AWS S3 Storage. 
 
-Supports Node.JS >= 4.0.0, Electron and the Browser.
+Supports Node.JS >= 6.0.0, Electron and the Browser.
 
 #### In active development, not Production ready.
 
@@ -26,17 +26,26 @@ const AwsAdapter = require('lowdb-adapter-aws-s3')
 // Init the adapter
 const adapter = new AwsAdapter()
 
+/* 
+*  Or with a custom bucket name
+*  const adapter = new AwsAdapter('db.json', {
+*    aws: {
+*      bucketName: 'my-awesome-bucket'
+*    }
+*  })
+*/
+
 // Go hard!
-lowDB(adapter)
+const db = lowDB(adapter)
 
   // Defaults FTW
-  .then(db => db.defaults({ posts: [], user: {} }).write())
+  db.defaults({ posts: [], user: {} }).write()
 
   // Push something awesome
-  .then(db => db.get('posts').push({ id: 1, title: 'lowdb is awesome'}).write())
+  .then(() => db.get('posts').push({ id: 1, title: 'lowdb is awesome'}).write())
 
   // Profit!
-  .then(db => console.log('Victory!'))
+  .then(() => console.log('Victory!'))
 ```
 
 ## Configuration
@@ -55,7 +64,7 @@ However, this module introduces a new paramater: `aws` which contains the option
 | --- | --- | --- | --- |
 | contentType | String | 'application/json' | The MimeType of the source file. |
 | bucketName | String | 'lowdb-data' | The name of the S3 bucket to write to. |
-| acl | String | 'private' | The AWS access control settings for the source file. |
+| acl | String | false | The AWS access control settings for the source file. |
 | cognitoCredentials | null | Object | The Object containing `CognitoIdentityCredentials` options (only required when using in the browser or Electron). |
 
 When using server-side AWS credentials should be set via the ENV, and will be picked up by AWS automattically. 

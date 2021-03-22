@@ -1,6 +1,6 @@
 {
   "name": "lowdb-adapter-aws-s3",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Amazon S3 Adapter for LowDB.",
   "main": "./lib/main.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "fix": "npm run lint -- --fix",
     "prepublishOnly": "npm run build && pkg-ok",
     "build": "npm run build:lib && npm run build:dist",
-    "build:lib": "rimraf lib && babel src --out-dir lib",
+    "build:lib": "rimraf lib && npx babel src --out-dir lib",
     "build:dist": "rimraf dist && webpack && webpack -p"
   },
   "repository": {
@@ -23,41 +23,42 @@
   },
   "homepage": "https://github.com/nicekiwi/lowdb-aws-s3-adapter#readme",
   "dependencies": {
-    "aws-sdk": "^2.167.0"
+    "aws-sdk": "^2.608.0"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.6.3",
-    "babel-cli": "^6.2.0",
-    "babel-eslint": "^8.0.0",
-    "babel-jest": "^25.0.0",
-    "babel-loader": "^7.1.1",
-    "babel-polyfill": "^6.9.1",
-    "babel-preset-env": "^1.6.0",
-    "babel-register": "^6.9.0",
+    "@babel/cli": "^7.8.3",
+    "@babel/core": "^7.8.3",
+    "@babel/polyfill": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
+    "@babel/register": "^7.8.3",
+    "babel-eslint": "^10.0.3",
+    "babel-jest": "^25.1.0",
+    "babel-loader": "^8.0.6",
     "delay": "^2.0.0",
-    "eslint": "^4.5.0",
-    "eslint-config-prettier": "^2.3.0",
+    "eslint": "^4.19.1",
+    "eslint-config-prettier": "^2.10.0",
     "eslint-config-standard": "^10.2.1",
-    "eslint-plugin-import": "^2.6.1",
+    "eslint-plugin-import": "^2.20.0",
     "eslint-plugin-node": "^5.1.0",
-    "eslint-plugin-prettier": "^2.1.2",
-    "eslint-plugin-promise": "^3.5.0",
-    "eslint-plugin-standard": "^3.0.1",
-    "husky": "^0.15.0-beta.15",
-    "jest": "^25.0.0",
+    "eslint-plugin-prettier": "^2.7.0",
+    "eslint-plugin-promise": "^3.8.0",
+    "eslint-plugin-standard": "^3.1.0",
+    "husky": "^0.15.0-rc.13",
+    "jest": "^25.1.0",
     "lodash-id": "^0.14.0",
     "mv": "^2.1.1",
     "pkg-ok": "^1.0.1",
-    "prettier": "^1.5.2",
+    "prettier": "^1.19.1",
     "ramda": "^0.25.0",
     "regenerator-runtime": "^0.11.0",
-    "rimraf": "^2.5.4",
-    "sinon": "^4.0.0",
+    "rimraf": "^2.7.1",
+    "sinon": "^4.5.0",
     "tempfile": "^2.0.0",
-    "webpack": "^3.3.0"
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10"
   },
   "engines": {
-    "node": ">=4"
+    "node": ">=6"
   },
   "husky": {
     "hooks": {
